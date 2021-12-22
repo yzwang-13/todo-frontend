@@ -1,10 +1,6 @@
-import logo from "./logo.svg";
 import "./App.css";
-import TodoApp, {
-	LoginComponent,
-	WelcomeComponent
-} from "./components/TodoApp";
 import "./bootstrap.css";
+import TodoApp from "./components/Routes/TodoApp";
 
 function App() {
 	return (

@@ -1,10 +1,10 @@
 import FooterComponent from "./FooterComponent";
-import HeaderComponent from "./HeaderComponent";
+import { Header } from "./HeaderComponent";
 
 const LayoutComponent = (props) => {
 	return (
 		<div>
-			<HeaderComponent />
+			<Header />
 			{props.children}
 			<FooterComponent />
 		</div>
