@@ -1,7 +1,7 @@
-#React Todo App
+# React Todo App
 
 
-##Description 
+## Description 
 Basic react Todo app
 
 
