@@ -12,7 +12,25 @@ const WelcomeComponent = (props) => {
 	);
 
 	const makeHelloWorldCallSync = () => {
-		HelloWorldService.getHelloWorldBeanMessage()
+		// HelloWorldService.getHelloWorldMessage()
+		// 	.then((response) => {
+		// 		console.log(response);
+		// 		setRandomText(response.data);
+		// 	})
+		// 	.catch();
+
+		// HelloWorldService.getHelloWorldBeanMessage()
+		// 	.then((response) => {
+		// 		console.log(response);
+		// 		setRandomText(response.data.message);
+		// 	})
+		// 	.catch();
+
+		HelloWorldService.getHelloWorldBeanPathVariableMessage(
+			"Wilson Wang",
+			100,
+			"WW"
+		)
 			.then((response) => {
 				console.log(response);
 				setRandomText(response.data.message);

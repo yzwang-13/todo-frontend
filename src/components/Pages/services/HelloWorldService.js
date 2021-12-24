@@ -9,7 +9,9 @@ export default class HelloWorldService {
 		return axios.get("http://localhost:8080/hello-world-bean");
 	}
 
-    static getHelloWorldBeanPathVariableMessage(name) {
-		return axios.get(`http://localhost:8080/hello-world-bean/ww/${name}`);
+	static getHelloWorldBeanPathVariableMessage(name, id, nick) {
+		return axios.get(
+			`http://localhost:8080/hello-world-bean/ww/${name}?id=${id}&nick=${nick}`
+		);
 	}
 }
