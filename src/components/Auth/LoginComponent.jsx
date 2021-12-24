@@ -6,9 +6,8 @@ const LoginComponent = (props) => {
 	const navigate = useNavigate();
 	let location = useLocation();
 	const auth = useAuth();
-	console.log(location.state?.from?.pathname);
+
 	let from = location.state?.from?.pathname || "/";
-	console.log(from);
 
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
