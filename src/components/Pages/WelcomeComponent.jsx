@@ -12,10 +12,10 @@ const WelcomeComponent = (props) => {
 	);
 
 	const makeHelloWorldCallSync = () => {
-		HelloWorldService.getHelloWorldMessage()
+		HelloWorldService.getHelloWorldBeanMessage()
 			.then((response) => {
 				console.log(response);
-				setRandomText(response.data);
+				setRandomText(response.data.message);
 			})
 			.catch();
 	};
