@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import HelloWorldService from "./services/HelloWorldService";
+import ErrorService from "./services/ErrorService";
 
 const WelcomeComponent = (props) => {
 	let params = useParams();
@@ -35,15 +36,10 @@ const WelcomeComponent = (props) => {
 				console.log(response);
 				setRandomText(response.data.message);
 			})
-			.catch();
+			.catch((error) => setRandomText(ErrorService.handleError(error)));
 	};
 
-	// useEffect(() => {
-	// 	effect
-	// 	return () => {
-	// 		cleanup
-	// 	};
-	// }, [input]);
+
 
 	return (
 		<>
