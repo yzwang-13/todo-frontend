@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { Route, Routes } from "react-router-dom";
 import LoginComponent from "../Auth/LoginComponent";
 import LayoutComponent from "../Layouts/LayoutComponent";
@@ -9,6 +9,8 @@ import WelcomeComponent from "../Pages/WelcomeComponent";
 import AuthContext from "../store/authContext";
 import RequireAuthComponent from "../Auth/RequireAuthComponent";
 import LogoutComponent from "../Auth/LogoutComponent";
+import TodoFormComponent from "../Pages/TodoFormComponent";
+import { TodosContextProvider } from "../store/todosContext";
 
 const TodoApp = () => {
 	const authContext = useContext(AuthContext);
@@ -20,11 +22,24 @@ const TodoApp = () => {
 				<Route path="/login" element={<LoginComponent />} />
 				<Route path="/welcome" element={<WelcomeComponent />} />
 				<Route path="/welcome/:name" element={<WelcomeComponent />} />
+
 				<Route
 					path="/todos"
 					element={
 						<RequireAuthComponent>
-							<ListTodosComponent />
+							<TodosContextProvider>
+								<ListTodosComponent />
+							</TodosContextProvider>
+						</RequireAuthComponent>
+					}
+				/>
+				<Route
+					path="/todo/:id"
+					element={
+						<RequireAuthComponent>
+							<TodosContextProvider>
+								<TodoFormComponent />
+							</TodosContextProvider>
 						</RequireAuthComponent>
 					}
 				/>
@@ -36,7 +51,7 @@ const TodoApp = () => {
 						</RequireAuthComponent>
 					}
 				/>
-				<Route path="*" element={<ErrorComponent />} />
+				{/* <Route path="*" element={<ErrorComponent />} /> */}
 			</Routes>
 		</LayoutComponent>
 	);
