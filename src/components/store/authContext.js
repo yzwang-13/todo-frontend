@@ -18,6 +18,8 @@ export const AuthContextProvider = (props) => {
 			if (authenticated) {
 				// set token
 				setToken("aaaa");
+				localStorage.setItem("token", token);
+				localStorage.setItem("username", "wilsonwang");
 				console.log("aaaa");
 				callback();
 			}
