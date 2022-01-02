@@ -11,6 +11,7 @@ const LoginComponent = (props) => {
 
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
+	const [inputHighlight, setInputHighlight] = useState(null);
 
 	const onSetUsernameHandler = (event) => {
 		setUsername((preUsername) => {
@@ -25,24 +26,31 @@ const LoginComponent = (props) => {
 	};
 
 	const onLoginClicked = () => {
-		if (username === "111" && password === "111") {
+		// perform login authentication
+
+		if (username && password) {
 			// login successful
 			// <Navigate to='/welcome'></Navigate>
-			navigate("/welcome", { replace: true });
+			// navigate("/welcome", { replace: true });
 			// AuthService.registerSuccessfulLogin(username, password);
 			//TODO: set is loading
 
 			//TODO: call login api
 
 			//TODO: call login handler to set the context of a successfully logged in user
-			auth.signin(username, () => {
+			auth.signin(username, password, (successfulLoggedIn) => {
 				// Send them back to the page they tried to visit when they were
 				// redirected to the login page. Use { replace: true } so we don't create
 				// another entry in the history stack for the login page.  This means that
 				// when they get to the protected page and click the back button, they
 				// won't end up back on the login page, which is also really nice for the
 				// user experience.
-				navigate(from, { replace: true });
+				if (successfulLoggedIn) {
+					navigate(from, { replace: true });
+				} else {
+					console.log("You are not authenticated!!!");
+					setInputHighlight("highlight");
+				}
 			});
 		}
 	};
@@ -57,6 +65,7 @@ const LoginComponent = (props) => {
 					name="username"
 					value={username}
 					onChange={onSetUsernameHandler}
+					className={inputHighlight}
 				/>
 				Password:
 				<input
@@ -64,6 +73,7 @@ const LoginComponent = (props) => {
 					name="password"
 					value={password}
 					onChange={onSetPassword}
+					className={inputHighlight}
 				/>
 				<button className="btn btn-secondary" onClick={onLoginClicked}>
 					Login
