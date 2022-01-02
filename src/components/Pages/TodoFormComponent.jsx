@@ -1,6 +1,8 @@
-import { Field, Form, Formik } from "formik";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import moment from "moment";
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
+import LoginComponent from "../Auth/LoginComponent";
 import Spinner from "../utils/Spinner/Spinner";
 import useTodos from "./hooks/useTodos";
 import TodoService from "./services/TodoService";
@@ -10,35 +12,98 @@ const TodoFormComponent = (props) => {
 	const params = useParams();
 	const todoContext = useTodos();
 	const navigate = useNavigate();
+	let todo;
 
-	const todo = todoContext.getSingleTodoById(params.id);
-	console.log(todo);
+	if (params.id !== "-1") {
+		todo = todoContext.getSingleTodoById(params.id);
+		console.log(todo);
 
-	useEffect(() => {
 		if (!todo) {
 			navigate("/todos");
 		}
-	}, []);
+	} else {
+		console.log("aaaaa");
+
+		todo = {
+			username: localStorage.getItem("username"),
+			description: "Please enter some description",
+			targetDate: moment().format("YYYY-MM-DD").toString(),
+			done: false
+		};
+		console.log(todo);
+	}
 
 	const handleSumbit = (values) => {
 		console.log(values);
-		TodoService.updateTodo(todo.id, {
+
+		const newTodo = {
 			username: localStorage.getItem("username"),
 			id: todo.id,
 			description: values.description,
 			targetDate: values.targetDate,
 			done: values.done
-		})
-			.then((response) => {
-				console.log(response);
-				if (response.status === 200) {
-					navigate("/todos");
-				}
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+		};
+		if (!todo.id) {
+			// add a new todo
+			TodoService.addTodo(newTodo)
+				.then((response) => {
+					if (response.data && response.status === 200) {
+						console.log(response);
+						navigate("/todos");
+					}
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} else {
+			// update existing todo
+			TodoService.updateTodo(todo.id, newTodo)
+				.then((response) => {
+					console.log(response);
+					if (response.status === 200) {
+						// update redux
+						if (response.data) {
+							todoContext.updateTodo(response.data);
+							navigate("/todos");
+						} else {
+							// todoContext.updateTodo(response.data);
+							// navigate("/todos");
+						}
+					}
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		}
 	};
+
+	const formValidate = (values) => {
+		let errors = {};
+		console.log(values.description.length);
+		if (values.description.length < 1) {
+			errors.description = "Description shouldn't be empty";
+		}
+
+		const dateTime = moment(values.targetDate, "YYYY-MM-DD", true);
+		console.log(dateTime.isValid());
+		console.log(dateTime.isAfter("2099-01-01T00:00:00Z"));
+
+		if (!dateTime.isValid() || dateTime.isAfter("2099-01-01T00:00:00Z")) {
+			errors.targetDate = "Target Date is not a valid date";
+		}
+		// let errors = {
+		// 	description: "should at least have 5 characters"
+		// };
+		console.log(values);
+		return errors;
+	};
+
+	const handleFocus = (event) => {
+		return event.target.select();
+	};
+
+	console.log(todo);
+	console.log(todo.targetDate);
 
 	return (
 		<React.Fragment>
@@ -57,25 +122,38 @@ const TodoFormComponent = (props) => {
 								targetDate: todo.targetDate,
 								done: todo.done
 							}}
-							onSubmit={(values) => {
-								handleSumbit(values);
-							}}
+							onSubmit={handleSumbit}
+							validate={formValidate}
+							validateOnChange={false}
+							validateOnBlur={false}
 						>
-							{(props) => (
+							{({ values, errors, touched }) => (
 								<Form>
+									<ErrorMessage
+										name="description"
+										component="div"
+										className="alert alert-warning"
+									/>
+									<ErrorMessage
+										name="targetDate"
+										component="div"
+										className="alert alert-warning"
+									/>
 									<div className="form-group row">
 										<label className="col-sm-2 col-form-label">
 											Description
 										</label>
-										<div class="col-sm-10">
+										<div className="col-sm-10">
 											<Field
 												className="form-control"
 												component="textarea"
 												rows="4"
 												name="description"
+												onFocus={handleFocus}
 											/>
 										</div>
 									</div>
+
 									<div className="form-group row">
 										<div className="col-sm-4">
 											<label>Target Date</label>
