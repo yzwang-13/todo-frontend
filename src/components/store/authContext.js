@@ -20,7 +20,6 @@ export const AuthContextProvider = (props) => {
 				setToken("aaaa");
 				localStorage.setItem("token", token);
 				localStorage.setItem("username", "wilsonwang");
-				console.log("aaaa");
 				callback();
 			}
 		});

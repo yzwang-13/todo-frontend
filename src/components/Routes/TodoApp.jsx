@@ -27,9 +27,7 @@ const TodoApp = () => {
 					path="/todos"
 					element={
 						<RequireAuthComponent>
-							<TodosContextProvider>
-								<ListTodosComponent />
-							</TodosContextProvider>
+							<ListTodosComponent />
 						</RequireAuthComponent>
 					}
 				/>
@@ -37,9 +35,7 @@ const TodoApp = () => {
 					path="/todo/:id"
 					element={
 						<RequireAuthComponent>
-							<TodosContextProvider>
-								<TodoFormComponent />
-							</TodosContextProvider>
+							<TodoFormComponent />
 						</RequireAuthComponent>
 					}
 				/>

@@ -3,12 +3,22 @@ import React, { useState } from "react";
 
 const TodosContext = React.createContext({
 	todos: [],
+	todosInitialized: false,
 	initializeTodos: () => {},
-	getSingleTodoById: () => {}
+	getSingleTodoById: () => {},
+	setTodosDoneInitialization: () => {},
+	updateTodo: () => {},
+	deleteTodo: () => {}
 });
 
 export const TodosContextProvider = (props) => {
 	const [todos, setTodos] = useState([]);
+	const [todosInitialized, setTodosInitialized] = useState(false);
+
+	const setTodosDoneInitialization = () => {
+		setTodosInitialized(true);
+		return todosInitialized;
+	};
 
 	const initializeTodos = (todos) => {
 		const transformedTodos = todos.map((todo) => {
@@ -21,20 +31,33 @@ export const TodosContextProvider = (props) => {
 				description: todo.description
 			};
 		});
-		console.log(todos);
-		console.log(transformedTodos);
 		setTodos(transformedTodos);
 	};
 
+	// const updateRemoveTodo = (currentTodos) => {
+	// 	const updatedTodos = currentTodos.filter(
+	// 		(todo) => todo.id !== updateTodo.id
+	// 	);
+	// 	return [updateTodo, ...updatedTodos];
+	// 	// const updatedTodos = [...currentTodos, updateTodo];
+	// 	// return updatedTodos;
+	// };
+
+	const updateTodo = (updateTodo) => {
+		setTodos((currentTodos) => {
+			const updatedTodos = currentTodos.filter(
+				(todo) => todo.id !== updateTodo.id
+			);
+			return [updateTodo, ...updatedTodos];
+			// const updatedTodos = [...currentTodos, updateTodo];
+			// return updatedTodos;
+		});
+	};
+
 	const getSingleTodoById = (id) => {
-		console.log("getSingleTodoById");
-		console.log(id);
-		console.log(todos);
 		if (todos.length > 0) {
 			for (const todo of todos) {
-				console.log(todo.id);
 				if (todo.id === id) {
-					console.log("returning");
 					return todo;
 				}
 			}
@@ -42,10 +65,21 @@ export const TodosContextProvider = (props) => {
 		return null;
 	};
 
+	const deleteTodo = (id) => {
+		setTodos((currentTodos) => {
+			const updatedTodos = currentTodos.filter((todo) => todo.id !== id);
+			return updatedTodos;
+		});
+	};
+
 	const contextValue = {
 		todos,
+		todosInitialized,
 		initializeTodos,
-		getSingleTodoById
+		getSingleTodoById,
+		setTodosDoneInitialization,
+		updateTodo,
+		deleteTodo
 	};
 
 	return (
