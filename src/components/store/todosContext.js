@@ -8,7 +8,8 @@ const TodosContext = React.createContext({
 	getSingleTodoById: () => {},
 	setTodosDoneInitialization: () => {},
 	updateTodo: () => {},
-	deleteTodo: () => {}
+	deleteTodo: () => {},
+	addTodo: () => {}
 });
 
 export const TodosContextProvider = (props) => {
@@ -54,6 +55,10 @@ export const TodosContextProvider = (props) => {
 		});
 	};
 
+	const addTodo = (todo) => {
+		setTodos([todo, ...todos]);
+	};
+
 	const getSingleTodoById = (id) => {
 		if (todos.length > 0) {
 			for (const todo of todos) {
@@ -79,7 +84,8 @@ export const TodosContextProvider = (props) => {
 		getSingleTodoById,
 		setTodosDoneInitialization,
 		updateTodo,
-		deleteTodo
+		deleteTodo,
+		addTodo
 	};
 
 	return (

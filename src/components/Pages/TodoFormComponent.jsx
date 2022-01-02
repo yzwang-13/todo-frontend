@@ -49,6 +49,7 @@ const TodoFormComponent = (props) => {
 				.then((response) => {
 					if (response.data && response.status === 200) {
 						console.log(response);
+						todoContext.addTodo(response.data);
 						navigate("/todos");
 					}
 				})
