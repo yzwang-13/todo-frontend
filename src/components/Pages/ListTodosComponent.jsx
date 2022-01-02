@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router";
 import Spinner from "../utils/Spinner/Spinner";
 import useTodos from "./hooks/useTodos";
@@ -8,8 +8,13 @@ import TodoRowComponent from "./TodoRowComponent";
 
 const ListTodosComponent = (props) => {
 	const navigate = useNavigate();
-	const todos = useTodos().todos;
-	const initializeTodos = useTodos().initializeTodos;
+	const {
+		todos,
+		todosInitialized,
+		initializeTodos,
+		setTodosDoneInitialization,
+		deleteTodo
+	} = useTodos();
 
 	console.log("ListTodosComponent");
 
@@ -17,28 +22,8 @@ const ListTodosComponent = (props) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [message, setMessage] = useState(null);
 
-	useEffect(() => {
-		console.log("useEffect");
-		fetchTodos();
-	}, []);
-
-	const updateTodoHander = (id) => {
-		navigate(`/todo/${id}`);
-	};
-
-	const deleteTodoHandler = (id) => {
-		TodoService.deleteTodo(id)
-			.then((response) => {
-				setMessage("Delete message successful");
-				console.log(response);
-				fetchTodos();
-			})
-			.catch((error) => {
-				ErrorService.handleError(error);
-			});
-	};
-
-	const fetchTodos = () => {
+	const fetchTodos = useCallback(() => {
+		console.log("fetch todos");
 		setIsLoading(true);
 		TodoService.getListofTodos()
 			.then((response) => {
@@ -51,10 +36,38 @@ const ListTodosComponent = (props) => {
 						targetDate: todo.targetDate
 					};
 				});
+				console.log(transformedTodo);
 				initializeTodos(transformedTodo);
 				setIsLoading(false);
+				setTodosDoneInitialization(true);
 			})
 			.catch((error) => ErrorService.handleError(error));
+	}, []);
+
+	useEffect(() => {
+		if (!todosInitialized) {
+			fetchTodos();
+		}
+	}, [todosInitialized, fetchTodos]);
+
+	const updateTodoHander = (id) => {
+		navigate(`/todo/${id}`);
+	};
+
+	const deleteTodoHandler = (id) => {
+		TodoService.deleteTodo(id)
+			.then((response) => {
+				console.log(response);
+				if (response.status === 200) {
+					setMessage("Delete message successful");
+					deleteTodo(id);
+				} else {
+					setMessage("Delete message unsuccessful!!!!");
+				}
+			})
+			.catch((error) => {
+				ErrorService.handleError(error);
+			});
 	};
 
 	const outputTodosTableBodyRows = () => {
@@ -82,6 +95,10 @@ const ListTodosComponent = (props) => {
 		}
 	};
 
+	const addTodoHandler = () => {
+		navigate(`/todo/-1`);
+	};
+
 	return (
 		<React.Fragment>
 			{message && <div className="alert alert-success">{message}</div>}
@@ -98,6 +115,12 @@ const ListTodosComponent = (props) => {
 				<>
 					<h1>List Todos</h1>
 					<div className="container">
+						<button
+							className="btn btn-sm btn-outline-danger"
+							onClick={addTodoHandler}
+						>
+							Add A Todo
+						</button>
 						<table className="table">
 							<thead>
 								<tr>
